@@ -1,0 +1,102 @@
+openapi: 3.1.0
+info:
+  title: Agent Memory Consensus API
+  version: 0.1.0-experimental
+  description: |
+    Experimental API for multi-agent memory governance.
+    Decides whether a proposed memory should be stored, rejected, held, summarized, or stored as hash-only.
+  x-guidance: |
+    Call this API before writing to long-term memory in multi-agent workflows.
+    Use after agent-security-gateway and agent-budget-guard checks.
+    Returns store / reject / hold / summarize / hash_only decision with audit log.
+
+paths:
+  /api/memory/consensus:
+    post:
+      summary: Memory Consensus - Decide whether to store a proposed memory
+      description: |
+        Evaluates a proposed memory write using quorum, confidence, veto rules,
+        sensitivity level, and storage cost. Returns a governance decision.
+      tags:
+        - Memory
+        - Governance
+      x-payment-info:
+        protocols:
+          - x402: {}
+        price:
+          mode: fixed
+          currency: USD
+          amount: "0.05"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - memory_proposal
+                - proposed_by
+              properties:
+                memory_proposal:
+                  type: string
+                  description: The content proposed for storage
+                proposed_by:
+                  type: string
+                  description: Agent ID proposing the memory
+                agent_votes:
+                  type: array
+                  items:
+                    type: string
+                  description: List of agent IDs participating in consensus
+                sensitivity:
+                  type: string
+                  enum: [low, medium, high]
+                  default: medium
+                storage_cost_estimate:
+                  type: number
+                  description: Estimated storage cost in USDC
+                retention_preference:
+                  type: string
+                  enum: [hot, warm, cold, hash_only]
+                  default: cold
+                context:
+                  type: object
+                  description: Additional context for consensus decision
+      responses:
+        "200":
+          description: Consensus decision returned
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  decision:
+                    type: string
+                    enum: [store, reject, hold, summarize, hash_only, expire]
+                  confidence:
+                    type: number
+                  quorum_result:
+                    type: object
+                    properties:
+                      approve:
+                        type: integer
+                      reject:
+                        type: integer
+                      hold:
+                        type: integer
+                  veto_detected:
+                    type: boolean
+                  veto_reason:
+                    type: string
+                    nullable: true
+                  storage_policy:
+                    type: string
+                    enum: [hot, warm, cold, hash_only]
+                  retention_days:
+                    type: integer
+                  audit_log_id:
+                    type: string
+                  next_recommended:
+                    type: string
+        "402":
+          description: Payment Required
