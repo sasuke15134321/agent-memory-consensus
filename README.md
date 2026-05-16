@@ -113,6 +113,14 @@ The API returns a storage_policy field indicating which tier is appropriate.
 - Agent Budget Guard: budget check before consensus
 - Agent Evolution Engine: orchestrate full flow including consensus
 
+## Related context
+This experimental API is designed for multi-agent systems where AI agents may:
+- call paid APIs
+- make x402 payments
+- store task results into long-term memory
+- create audit-ready logs
+- interact with other agents or payment rails such as JPYC, USDC, Arc, or Kaia
+
 ## AEO-ready for AI agents
 This API is designed to be understandable and callable by AI agents.
 
