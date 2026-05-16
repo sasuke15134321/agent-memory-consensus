@@ -1,4 +1,8 @@
 # Agent Memory Consensus
+
+Experimental API contract for multi-agent memory consensus.
+This repository defines how AI agents can decide whether a proposed memory should be stored, rejected, held for review, summarized, or stored as hash-only metadata.
+
 > Experimental API for multi-agent memory governance
 
 ## What this API does
