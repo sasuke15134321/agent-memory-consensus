@@ -61,6 +61,71 @@ Agent Memory Consensus supports tiered storage decisions:
 
 The API returns a storage_policy field indicating which tier is appropriate.
 
+## Memory poisoning protection
+
+Long-term memory becomes a new attack surface in multi-agent systems.
+
+If an AI agent stores false, manipulated, outdated, or malicious information into long-term memory, future decisions may be affected even after the original attack is gone.
+
+Agent Memory Consensus checks memory proposals before they are written.
+
+It helps decide whether a proposed memory should be:
+
+- stored
+- rejected
+- held for review
+- summarized
+- stored as hash-only metadata
+- expired after a short retention period
+
+The goal is not to store everything.
+
+The goal is to decide what should become long-term memory, what should remain temporary, and what should never be stored.
+
+## Threat model
+
+Agent Memory Consensus is designed to reduce risks such as:
+
+- Memory poisoning
+- Memory compression poisoning
+- Tool misrouting
+- Context drift
+- Prompt laundering
+- Confidence inflation
+- Stale memory
+- Internal feedback loops
+
+These risks can occur when agent outputs, summaries, tool results, or external information are written into long-term memory without validation.
+
+This API does not claim to solve all memory safety problems.
+It provides a structured decision layer before memory is stored.
+
+## Non-paraphrase memory fields
+
+Some memory fields should not be paraphrased, summarized, inferred, or reconstructed.
+
+Examples:
+
+- medical condition names
+- legal status
+- contract terms
+- payment amounts
+- wallet addresses
+- tax categories
+- identity information
+- dates and deadlines
+- official disclaimers
+- production / experimental status
+
+For these fields, the system should either:
+
+- preserve the exact original text
+- store structured values only after confirmation
+- require human review
+- or avoid storing the information
+
+If exactness cannot be guaranteed, the decision should be hold, hash_only, or reject.
+
 ## Output
 - decision: store / reject / hold / summarize / hash_only / expire
 - confidence: 0.0 to 1.0
@@ -70,6 +135,12 @@ The API returns a storage_policy field indicating which tier is appropriate.
 - storage_policy: hot / warm / cold / hash_only
 - retention_days: integer
 - audit_log_id: string
+- poisoning_risk: low / medium / high
+- compression_risk: boolean
+- paraphrase_allowed: boolean
+- requires_exact_text: boolean
+- requires_human_confirmation: boolean
+- memory_type: episodic / semantic / procedural / audit
 - next_recommended: string
 
 ## Example Request
@@ -103,6 +174,12 @@ The API returns a storage_policy field indicating which tier is appropriate.
   "storage_policy": "cold",
   "retention_days": 365,
   "audit_log_id": "memlog_20260516_001",
+  "poisoning_risk": "low",
+  "compression_risk": false,
+  "paraphrase_allowed": true,
+  "requires_exact_text": false,
+  "requires_human_confirmation": false,
+  "memory_type": "audit",
   "next_recommended": "proceed_to_memory_store"
 }
 ```
