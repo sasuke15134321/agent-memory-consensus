@@ -198,14 +198,6 @@ This experimental API is designed for multi-agent systems where AI agents may:
 - create audit-ready logs
 - interact with other agents or payment rails such as JPYC, USDC, Arc, or Kaia
 
-## AEO-ready for AI agents
-This API is designed to be understandable and callable by AI agents.
-
-- When to call: before any long-term memory write in multi-agent workflows
-- Best used before: agent-memory-api /api/memory/store
-- Compatible with: Arc ERC-8183, x402, USDC, JPYC payment flows
-- next_recommended: always returned to guide agent's next action
-
 ## Arc / ERC-8183 relevance
 Arc and ERC-8183 may enable AI agents to receive jobs, use escrow, and settle payments on-chain.
 Agent Memory Consensus fits after job execution, before writing the result into long-term shared memory.
